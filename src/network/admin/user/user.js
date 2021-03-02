@@ -43,3 +43,14 @@ export function updateRole(userId, roleId) {
     }
   })
 }
+
+
+export function getUserInfo(userId) {
+  return request({
+    url: "/admin/getUserInfo",
+    method: "POST",
+    params: {
+      userId: userId
+    }
+  })
+}

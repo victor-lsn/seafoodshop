@@ -32,10 +32,13 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <el-button type="info" icon="el-icon-search" circle></el-button>
-          <el-button type="primary" icon="el-icon-user" circle></el-button>
+          <template slot-scope="scope">
+            <el-button type="info" icon="el-icon-search" @click="getUserInfo(scope.row.id)" circle></el-button>
+            <el-button type="primary" icon="el-icon-user" circle @click="addUserRole(scope.row)"></el-button>
+          </template>
         </el-table-column>
       </el-table>
+
       <el-pagination style="margin-top: 15px"
                      @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
@@ -45,12 +48,58 @@
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="pageInfo.total">
       </el-pagination>
+
+
+      <!--   用户详情   -->
+      <el-dialog
+        title="用户详情"
+        :visible.sync="userInfoDialog"
+        width="28%">
+        <div style="font-size: 18px">
+          <div style="margin-bottom: 15px">用户名：{{ userInfo.name }}</div>
+          <div style="margin-bottom: 15px">电话：{{ userInfo.phone }}</div>
+          <div style="margin-bottom: 15px">角色：{{ userInfo.roleName }}</div>
+          <div style="margin-bottom: 15px">启用状态：{{ userInfo.flag == 0 ? "禁用中" : "使用中" }}</div>
+          <el-card v-for="(item,index) in userInfo.addrs" :key="index">
+            <div>收获地址{{ index + 1 }}</div>
+            <div>收货人：{{ item.realName }}</div>
+            <div>地址：{{ item.addr }}</div>
+          </el-card>
+        </div>
+      </el-dialog>
+
+      <!--   修改用户角色   -->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="addUserRoleShow" width="28%" :before-close="addUserRoleClose">
+        <el-form>
+          <el-form-item label="当前角色">
+            <el-tag>{{ addUserRoleForm.selectorRoleName }}</el-tag>
+          </el-form-item>
+          <el-form-item label="活动名称" prop="name" style="width: 100%">
+            <el-select filterable placeholder="请选择角色" class="my-search-input"
+                       v-model="addUserRoleForm.selectorRoleValue" style="width: 30%">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="updateUserRole">修改</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
 import * as user from '../../../network/admin/user/user'
+import * as role from '../../../network/admin/role/role'
+import {getAllRole} from "../../../network/admin/role/role";
 
 export default {
   name: "user",
@@ -58,43 +107,51 @@ export default {
     return {
       userList: [],
       pageInfo: null,
-      options: [{
-        value: '1',
-        label: '黄金糕'
-      }, {
-        value: '0',
-        label: '双皮奶'
-      }, {
-        value: '3',
-        label: '蚵仔煎'
-      }, {
-        value: '4',
-        label: '龙须面'
-      }, {
-        value: '5',
-        label: '北京烤鸭'
-      }],
+      options: [],
       currentPage4: 1,
       search: {
         pageNo: 1,
         pageSize: 10,
         username: "",
         phone: "",
-      }
+      },
+      userInfo: {},
+      userInfoDialog: false,
+      addUserRoleShow: false,
+      addUserRoleForm: {
+        selectorRoleName: "",
+        selectorRoleValue: "",
+        selectorUserId: ""
+      },
+
     }
   },
   mounted() {
     this.getAllUser();
+    this.getAllRole();
   },
   methods: {
     getAllUser() {
       user.getUserPage(this.search).then(res => {
         if (res.data.code == 200) {
           this.pageInfo = res.data.data;
-          console.log(this.pageInfo);
         }
       }).catch(err => {
         console.log(err);
+      })
+    },
+    //获取角色列表
+    getAllRole() {
+      role.getAllRole().then(res => {
+        for (let i = 0; i < res.data.data.length; i++) {
+          console.log(res.data.data[i])
+          this.options.push({
+            "value": res.data.data[i].id,
+            "label": res.data.data[i].name
+          });
+        }
+
+        res.data.data
       })
     },
     //修改每页显示的条数
@@ -119,21 +176,52 @@ export default {
       }
       user.updateStatus(event.id, event.flag).then(res => {
         if (res.data.code == 200) {
-          this.$message.success(res.data.message)
+          this.$notify.success(res.data.message)
         } else {
-          this.$message.warning(res.data.message)
+          this.$notify.warning(res.data.message)
         }
       }).catch(err => {
         console.log(err);
       })
     },
+    addUserRole(row) {
+      this.addUserRoleForm.selectorRoleName = row.roleName;
+      this.addUserRoleForm.selectorUserId = row.id;
+      this.addUserRoleShow = true;
+      console.log(this.addUserRoleForm)
+    },
+    addUserRoleClose() {
+      this.addUserRoleForm.selectorRoleValue = "";
+      this.addUserRoleShow = false;
+    },
     //修改用户角色
-    setRole() {
-
+    updateUserRole() {
+      console.log(this.addUserRoleForm)
+      if (this.addUserRoleForm.selectorRoleValue == "" && this.addUserRoleForm.selectorRoleValue != 0) {
+        this.addUserRoleShow = false;
+        this.addUserRoleForm.selectorRoleValue = "";
+        return;
+      }
+      //更新角色
+      user.updateRole(this.addUserRoleForm.selectorUserId, this.addUserRoleForm.selectorRoleValue).then(res => {
+        if (res.data.code == 200) {
+          this.$notify.success(res.data.message);
+          this.addUserRoleShow = false;
+        } else {
+          this.$notify.error(re.data.message)
+        }
+      })
     },
     //查询单个用户的详细信息
-    getUserInfo(userId){
-
+    getUserInfo(userId) {
+      user.getUserInfo(userId).then(res => {
+        if (res.data.code == 200) {
+          this.userInfo = res.data.data;
+          this.userInfoDialog = true;
+        }
+      }).catch(err => {
+        console.log(err);
+      })
     }
   }
 }

@@ -6,3 +6,16 @@ export function getMenu() {
     method: "POST"
   })
 }
+
+export function addMenu(name,path,parent,icon) {
+  return request({
+    url: "/admin/addMenu",
+    method: "POST",
+    params:{
+      name:name,
+      path:path,
+      parent:parent,
+      icon:icon
+    }
+  })
+}

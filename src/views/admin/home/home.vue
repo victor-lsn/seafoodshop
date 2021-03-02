@@ -81,6 +81,8 @@ export default {
 
 .el-header {
   background-color: #373d41;
+  position: relative;
+  width: 100%;
 }
 
 .el-menu {
@@ -89,9 +91,20 @@ export default {
 
 .el-aside {
   background-color: #333744;
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 60px;
+  bottom: 0;
 }
 
 .el-main {
   background-color: #eaedf1;
+  position: absolute;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  top: 60px;
+  overflow: scroll;
 }
 </style>

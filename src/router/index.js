@@ -6,6 +6,10 @@ import register from "../views/user/login/register";
 import adminHome from "../views/admin/home/home";
 import welcome from "../views/admin/home/welcome";
 import adminUser from "../views/admin/user/user";
+import adminRole from "../views/admin/role/role";
+import adminPermission from "../views/admin/permission/permission";
+import adminCategory from "../views/admin/category/category";
+import adminGoods from "../views/admin/good/goods";
 
 Vue.use(Router)
 
@@ -39,6 +43,22 @@ export default new Router({
         {
           path: '/users',
           component: adminUser
+        },
+        {
+          path: '/roles',
+          component: adminRole
+        },
+        {
+          path: '/permission',
+          component: adminPermission
+        },
+        {
+          path:'/category',
+          component: adminCategory
+        },
+        {
+          path:'/goods',
+          component: adminGoods
         }
       ]
     }
