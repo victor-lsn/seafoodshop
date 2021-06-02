@@ -6,10 +6,10 @@
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card :gutter="20" style="margin-top: 15px">
-      <div style="display: flex;margin-bottom: 15px">
-        <el-input placeholder="用户名" class="my-search-input" v-model="search.username"></el-input>
-        <el-input placeholder="手机号" class="my-search-input" v-model="search.phone"></el-input>
-        <el-select filterable placeholder="角色" class="my-search-input" v-model="search.role">
+      <div style="display: flex;margin-bottom: 10px">
+        <el-input placeholder="用户名" class="my-search-input" v-model="search.username" size="mini"></el-input>
+        <el-input placeholder="手机号" class="my-search-input" v-model="search.phone" size="mini"></el-input>
+        <el-select filterable placeholder="角色" class="my-search-input" v-model="search.role" size="mini" clearable>
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -17,7 +17,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-search" @click="getAllUser">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getAllUser" size="mini">搜索</el-button>
       </div>
       <el-table ref="userTable" :data="pageInfo.list" border stripe style="width: 100%;font-size: 13px">
         <el-table-column label="序号" type="index"></el-table-column>
@@ -28,13 +28,13 @@
         <el-table-column prop="roleName" label="角色"></el-table-column>
         <el-table-column prop="flag" label="是否启用">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.status" @change="setStatus(scope.row)"></el-switch>
+            <el-switch size="mini" v-model="scope.row.status" @change="setStatus(scope.row)"></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="info" icon="el-icon-search" @click="getUserInfo(scope.row.id)" circle></el-button>
-            <el-button type="primary" icon="el-icon-user" circle @click="addUserRole(scope.row)"></el-button>
+            <el-button type="info" icon="el-icon-search" @click="getUserInfo(scope.row.id)" circle size="mini"></el-button>
+            <el-button type="primary" icon="el-icon-user" circle @click="addUserRole(scope.row)" size="mini"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,21 +51,26 @@
 
 
       <!--   用户详情   -->
-      <el-dialog
-        title="用户详情"
-        :visible.sync="userInfoDialog"
-        width="28%">
-        <div style="font-size: 18px">
-          <div style="margin-bottom: 15px">用户名：{{ userInfo.name }}</div>
-          <div style="margin-bottom: 15px">电话：{{ userInfo.phone }}</div>
-          <div style="margin-bottom: 15px">角色：{{ userInfo.roleName }}</div>
-          <div style="margin-bottom: 15px">启用状态：{{ userInfo.flag == 0 ? "禁用中" : "使用中" }}</div>
-          <el-card v-for="(item,index) in userInfo.addrs" :key="index">
-            <div>收获地址{{ index + 1 }}</div>
-            <div>收货人：{{ item.realName }}</div>
-            <div>地址：{{ item.addr }}</div>
-          </el-card>
-        </div>
+      <el-dialog title="用户详情" :visible.sync="userInfoDialog" width="35%">
+        <el-form :model="userInfo" style="display: flex;flex-wrap: wrap;justify-content: space-between">
+          <el-form-item label="用户名" style="width: 48%">
+            <el-input disabled v-model="userInfo.name" placeholder="用户名"></el-input>
+          </el-form-item>
+          <el-form-item label="电话">
+            <el-input disabled v-model="userInfo.phone" placeholder="电话"></el-input>
+          </el-form-item>
+          <el-form-item label="角色">
+            <el-input disabled v-model="userInfo.roleName" placeholder="角色"></el-input>
+          </el-form-item>
+          <el-form-item label="启用状态">
+            <el-input disabled :placeholder="userInfo.flag == 0 ? '禁用中' : '使用中'"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-table :data="userInfo.addrs" style="width: 100%">
+          <el-table-column type="index"></el-table-column>
+          <el-table-column prop="realName" label="收货人" width="180"></el-table-column>
+          <el-table-column prop="addr" label="收货人" width="180"></el-table-column>
+        </el-table>
       </el-dialog>
 
       <!--   修改用户角色   -->

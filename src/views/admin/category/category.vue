@@ -6,11 +6,11 @@
       <el-breadcrumb-item>商品分类</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card style="margin-top: 15px;">
-      <el-button type="primary" @click="addCategoryDialogShow = true">新增分类</el-button>
+      <el-button type="primary" @click="addCategoryDialogShow = true" size="mini">新增分类</el-button>
       <!--      表格-->
       <el-table
         :data="categoryList"
-        style="width: 100%;margin-top: 15px;"
+        style="width: 100%;margin-top: 10px;"
         row-key="id"
         border
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
@@ -40,7 +40,7 @@
         <el-table-column
           label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" @click="">修改</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="toUpdate(scope.row)">修改</el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteCategory(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -93,6 +93,38 @@
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
+
+
+    <!--  修改  -->
+    <el-dialog title="修改分类" :visible.sync="dialogUpdate" width="30%">
+      <el-form ref="updateForm" :model="updateForm" label-width="80px">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="updateForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="等级" prop="level">
+          <el-radio-group v-model="updateForm.level" size="small" fill="#66b1ff" disabled>
+            <el-radio-button :label="1">一级</el-radio-button>
+            <el-radio-button :label="2">二级</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="描述" prop="name">
+          <el-input v-model="updateForm.categoryDesc"></el-input>
+        </el-form-item>
+        <el-form-item label="父分类" prop="parent" v-if="updateForm.level == 2">
+          <el-select v-model="updateForm.parent" placeholder="请选择">
+            <el-option
+              v-for="item in categoryList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="updateCategory">确认修改</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -125,7 +157,9 @@ export default {
         parent: [
           {required: true, message: '请选择父级权限', trigger: 'change'}
         ],
-      }
+      },
+      dialogUpdate:false,
+      updateForm:{}
     }
   },
   mounted() {
@@ -189,6 +223,26 @@ export default {
         })
       }).catch(()=>{
         this.$notify.success("成功取消删除")
+      })
+    },
+    toUpdate(row){
+      category.getCategoryById(row.id).then(res => {
+        this.updateForm.id = row.id;
+        this.updateForm = res.data.data;
+        this.getCategory();
+        this.dialogUpdate = true;
+      })
+    },
+    updateCategory(){
+      //把修改表单提交到后台处理
+      category.updateCategory(this.updateForm).then(res => {
+        if (res.data.code == 200){
+          this.$notify.success(res.data.message)
+        }else if(res.data.code == 444){
+          this.$notify.error(res.data.message)
+        }
+        this.dialogUpdate = false;
+        this.getCategory();
       })
     }
   }

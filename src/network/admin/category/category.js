@@ -29,3 +29,28 @@ export function deleteCategory(categoryId) {
     }
   })
 }
+
+export function getParentCategoryVo(){
+  return request({
+    url: "/admin/getParentCategoryVo",
+    method: "POST",
+  })
+}
+
+export function getCategoryById(id){
+  return request({
+    url: "/admin/getCategoryById",
+    method: "POST",
+    params: {
+      id
+    }
+  })
+}
+
+export function updateCategory(categoty){
+  return request({
+    url: "/admin/updateCategory",
+    method: "POST",
+    params: categoty
+  })
+}
