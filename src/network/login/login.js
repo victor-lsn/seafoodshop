@@ -24,3 +24,10 @@ export function register(name, phone, password, code) {
     method: "POST"
   })
 }
+
+export function getCode() {
+  return request({
+    url: "/user/getCode",
+    method: "POST"
+  })
+}

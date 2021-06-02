@@ -16,16 +16,21 @@
         <el-aside width="200px">
           <el-menu
             background-color="#333744"
-            text-color="#fff"
-            active-text-color="#ffd04b" v-for="item in menuList" :key="item.id" router unique-opened>
-            <el-submenu :index="item.id+''">
+            :unique-opened=true
+            text-color="#fff" default-active="welcome"
+            active-text-color="#ffd04b"  router >
+            <el-menu-item index="welcome">
+              <i class="el-icon-s-data"></i>
+              <span slot="title">首页统计</span>
+            </el-menu-item>
+            <el-submenu :index="item.id+' '" v-for="(item,index) in menuList" :key="index">
               <!--一级菜单-->
               <template slot="title">
                 <i :class="item.icon"></i>
                 <span>{{ item.name }}</span>
               </template>
               <!--二级菜单-->
-              <el-menu-item :index="sub.path" v-for="sub in item.children" :key="sub.id">
+              <el-menu-item  v-for="(sub,index2) in item.children" :key="index2" :index="sub.path">
                 <template slot="title">
                   <i :class="sub.icon"></i>
                   <span>{{ sub.name }}</span>
@@ -58,7 +63,7 @@ export default {
   },
   methods: {
     getMenu() {
-      menu.getMenu().then(res => {
+      menu.getMenu(localStorage.getItem("userRole")).then(res => {
         if (res.data.code == 200) {
           this.menuList = res.data.data;
         }

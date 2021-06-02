@@ -6,8 +6,8 @@
       <el-breadcrumb-item>角色管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card style="margin-top: 15px;">
-      <el-button type="primary" @click="addRoleDialogShow = true">新增角色</el-button>
-      <el-table border :data="roleList" style="width: 100%;margin-top: 15px">
+      <el-button type="primary" @click="addRoleDialogShow = true" size="mini">新增角色</el-button>
+      <el-table border :data="roleList" style="width: 100%;margin-top: 10px">
         <el-table-column type="expand">
           <template slot-scope="scope">
             <div v-for="item in scope.row.children" style="display: flex;align-items: center">
@@ -162,7 +162,7 @@ export default {
     },
     //修改角色权限
     addPermissionDialog(id) {
-      menu.getMenu().then(res => {
+      menu.getAllMenu().then(res => {
         if (res.data.code == 200) {
           this.menuList = res.data.data;
           this.addPermissionDialogShow = true;

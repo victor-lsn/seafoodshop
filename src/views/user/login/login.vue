@@ -16,8 +16,13 @@
             <el-input v-model="ruleForm.password" show-password></el-input>
           </el-form-item>
           <el-form-item label="验证码" prop="code">
-            <el-input v-model="ruleForm.code" style="width: 60%"></el-input>
-            <el-button style="width: 120px" v-show="ruleForm.codeStatus" @click.prevent="getCode">获取验证码</el-button>
+            <div style="display: flex">
+              <el-input v-model="ruleForm.code" style="width:59%"></el-input>
+              <!--            <el-button style="width: 120px" v-show="ruleForm.codeStatus" @click.prevent="getCode">获取验证码</el-button>-->
+              <div @click="getCheckCode">
+                <s-identify :key="timer"  ref="child" :identifyCode="checkCode"></s-identify>
+              </div>
+            </div>
             <el-button style="width: 120px" v-show="!ruleForm.codeStatus" disabled>{{ ruleForm.codeCount }}</el-button>
           </el-form-item>
           <el-form-item>
@@ -32,9 +37,13 @@
 
 <script>
 import * as login from '../../../network/login/login'
+import SIdentify from '../../../components/user/SIdentify'
 
 export default {
   name: "login",
+  components:{
+    SIdentify
+  },
   data() {
     return {
       ruleForm: {
@@ -42,7 +51,7 @@ export default {
         password: '',
         code: '',
         codeCount: null,
-        codeStatus: true
+        codeStatus: true,
       },
       rules: {
         phone: [
@@ -65,8 +74,13 @@ export default {
         code: [
           {required: true, message: '请输入验证码', trigger: 'blur'}
         ],
-      }
+      },
+      checkCode:"",
+      timer: ''
     };
+  },
+  mounted() {
+    this.getCheckCode();
   },
   methods: {
     submitForm(formName) {
@@ -78,6 +92,7 @@ export default {
             if(res.data.code == 200){
               _this.$message.success(res.data.message);
               localStorage.setItem("token",res.data.data.token);
+              localStorage.setItem("userId",res.data.data.user.id);
               localStorage.setItem("username",res.data.data.user.name);
               localStorage.setItem("userRole",res.data.data.user.role);
               _this.$router.push("/");
@@ -108,6 +123,15 @@ export default {
         }
       }, 1000)
 
+    },
+    getCheckCode(){
+      login.getCode().then(res=>{
+        this.checkCode = res.data.message;
+        this.timer = new Date().getTime();
+        this.$refs.child.drawPic();
+      }).catch(err=>{
+        console.log(err)
+      })
     }
   }
 }
@@ -131,6 +155,10 @@ export default {
   height:100%;  /**宽高100%是为了图片铺满屏幕 */
   z-index:-1;
   position: absolute;
+}
+
+.login-code {
+  cursor: pointer;
 }
 
 </style>

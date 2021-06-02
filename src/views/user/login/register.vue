@@ -7,7 +7,7 @@
       <el-card class="login-body">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item style="display: flex;width: 100%;justify-content: center;align-items: center">
-            <span style="font-size: 25px;font-weight: bold">海鲜商城</span>
+            <span style="font-size: 25px;font-weight: bold;">海鲜商城</span>
           </el-form-item>
           <el-form-item label="用户名" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
@@ -19,8 +19,12 @@
             <el-input v-model="ruleForm.phone"></el-input>
           </el-form-item>
           <el-form-item label="验证码" prop="code">
-            <el-input v-model="ruleForm.code" style="width: 60%"></el-input>
-            <el-button style="width: 120px" v-show="ruleForm.codeStatus" @click.prevent="getCode">获取验证码</el-button>
+            <div style="display: flex">
+              <el-input v-model="ruleForm.code" style="width: 59%"></el-input>
+              <div>
+                <s-identify identifyCode="1234"></s-identify>
+              </div>
+            </div>
             <el-button style="width: 120px" v-show="!ruleForm.codeStatus" disabled>{{ ruleForm.codeCount }}</el-button>
           </el-form-item>
           <el-form-item>
@@ -36,9 +40,13 @@
 
 <script>
 import * as login from "../../../network/login/login";
+import SIdentify from '../../../components/user/SIdentify'
 
 export default {
   name: "register",
+  components:{
+    SIdentify
+  },
   data() {
     return {
       ruleForm: {
