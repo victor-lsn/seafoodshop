@@ -632,6 +632,7 @@ export default {
           }
         }).then(res => {
           console.log(res);
+          this.$notify.success(res.data.message);
           this.batchFileDialog = false;
         })
       }

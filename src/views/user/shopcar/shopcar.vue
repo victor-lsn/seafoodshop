@@ -6,7 +6,7 @@
     <div style="width: 100%;display: flex;justify-content: center;margin-top: 15px">
       <el-card style="width: 60%">
         <div slot="header" class="clearfix">
-          <span style="font-size: 20px">购物车</span>
+          <span style="font-size: 20px">批发车</span>
         </div>
         <div>
           <el-table
@@ -114,7 +114,7 @@ export default {
       this.allPrice = price;
     },
     deleteGoodFromCar(scope) {
-      this.$confirm('此操作将 '+scope.row.seafood.name+'移除购物车, 是否继续?', '提示', {
+      this.$confirm('此操作将 '+scope.row.seafood.name+'移除批发车, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
