@@ -22,7 +22,7 @@
           <span>小图区域</span>
         </div>
         <div v-for="item in advertList2" :key="item.id" style="margin: 0 10px 0 0px;display: flex;flex-direction: column;align-items: center">
-          <img :src="baseUrl + item.name" style="object-fit: cover"/>
+          <img :src="baseUrl + item.name" style="object-fit: cover;width: 150px;height: 100%"/>
           <el-upload class="upload-demo" action="http://localhost:9527/admin/uploadLunbo" :headers="headers" :data="{id:item.id}" :on-success="successUpload2">
             <el-button style="margin: 10px 0 0 0" type="warning" circle class="el-icon-s-tools"></el-button>
           </el-upload>

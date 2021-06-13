@@ -76,3 +76,34 @@ export function getOrderCountMap(){
     method:"POST",
   })
 }
+
+export function getOrderCountByMonth2(year){
+  return request({
+    url: "/admin/getOrderCountByMonth2",
+    method: "POST",
+    params:{
+      year
+    }
+  })
+}
+
+
+export function getOrderMoneyByMonth2(year){
+  return request({
+    url: "/admin/getOrderMoneyByMonth2",
+    method: "POST",
+    params:{
+      year
+    }
+  })
+}
+
+export function getOrderCountMap2(year){
+  return request({
+    url:"/admin/getOrderCountMap2",
+    method:"POST",
+    params:{
+      year
+    }
+  })
+}

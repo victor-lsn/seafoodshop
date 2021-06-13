@@ -47,7 +47,7 @@
         <div
           style="display: flex;flex-direction: column;width: 100px;justify-content: space-between;height: 100%;margin-left: 6px">
           <div style="width: 150px;height: 32%;background-color: antiquewhite" v-for="(item,index) in advertList2" :key="index">
-            <img :src="baseUrl+item.name">
+            <img style="width: 150px;height: 100%" :src="baseUrl+item.name">
             <span style="position: relative;top: -80px;color: #F4F4F4;font-size: 60px;font-family: Helvetica;overflow: hidden">{{myNameList[index]}}</span>
           </div>
         </div>
@@ -444,7 +444,7 @@ export default {
     transform: translateX(0%);
   }
   to{
-    transform: translateX(-80%);
+    transform: translateX(-40%);
   }
 }
 

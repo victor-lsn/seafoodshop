@@ -1,15 +1,22 @@
 <template>
   <div style="font-size: 22px;font-weight: bold">
-    欢迎来到后台管理系统
+    <div style="display: flex;justify-content: space-between">
+      <span>欢迎来到后台管理系统</span>
+      <div>
+        <span style="font-size: 18px">当前年份：</span>
+        <el-date-picker @change="changeYear" v-model="year" type="year" placeholder="选择年"></el-date-picker>
+      </div>
+    </div>
     <div style="margin-top: 8px">
       <div class="my_font">今日订单：<p style="color:#C23531">{{dayCount}}</p></div>
       <div class="my_font">今年订单：<p style="color:#C23531">{{yearCount}}</p></div>
     </div>
+
     <div style="display: flex;justify-content: space-around;margin-top: 20px">
       <!-- [1] 为 ECharts 准备一个具备大小 (宽高) 的 DOM 标签-->
-      <div id="chart1" ref="chart1" style="width: 350px; height: 350px"></div>
-      <div id="chart2" ref="chart2" style="width: 350px; height: 350px"></div>
-      <div id="chart3" ref="chart3" style="width: 350px; height: 350px"></div>
+      <div id="chart1" ref="chart1" style="width: 380px; height: 350px"></div>
+      <div id="chart2" ref="chart2" style="width: 560px; height: 350px"></div>
+      <div id="chart3" ref="chart3" style="width: 380px; height: 350px"></div>
     </div>
   </div>
 </template>
@@ -32,6 +39,7 @@ export default {
       saleCountCategory: [],
       dayCount:null,
       yearCount:null,
+      year:"2021"
     };
   },
   mounted() {
@@ -45,6 +53,11 @@ export default {
     this.getOrderCountMap();
   },
   methods: {
+    changeYear(){
+      this.getOrderCountByMonth();
+      this.getOrderMoneyByMonth();
+      this.getOrderCountMap();
+    },
     makeChart1(chart) {
       chart.setOption({
         //设置标题
@@ -127,14 +140,14 @@ export default {
       });
     },
     getOrderCountByMonth() {
-      statistics.getOrderCountByMonth().then(res => {
+      statistics.getOrderCountByMonth2(new Date(this.year).getFullYear()).then(res => {
         this.orderCountList = Object.values(res.data.data);
         this.chart1 = echarts.init(this.$refs.chart1);
         this.makeChart1(this.chart1);
       })
     },
     getOrderMoneyByMonth() {
-      statistics.getOrderMoneyByMonth().then(res => {
+      statistics.getOrderMoneyByMonth2(new Date(this.year).getFullYear()).then(res => {
         this.orderMoneyList = Object.values(res.data.data);
         this.chart2 = echarts.init(this.$refs.chart2);
         this.makeChart2(this.chart2);
@@ -159,7 +172,7 @@ export default {
       })
     },
     getOrderCountMap(){
-      statistics.getOrderCountMap().then(res=>{
+      statistics.getOrderCountMap2(new Date(this.year).getFullYear()).then(res=>{
         this.dayCount = res.data.data.dayCount;
         this.yearCount = res.data.data.yearCount;
       })
